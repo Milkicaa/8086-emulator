@@ -4,13 +4,13 @@ Exercise of Low Level Programming with 8086 Assembly Lecture, implemented with E
 In general, Emu8086 is easier to use, write code and test program. 
 The program converts from hexadecimal to decimal numbers.
 
-https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%201s.png
+![Screenshot (2)](https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%201s.png)
 
-https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%202s.png
+![Screenshot (4)](https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%202s.png)
 
-https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%203s.png
+![Screenshot (5)](https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%203s.png)
 
-https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%204s.png
+![Screenshot (7)](https://github.com/Milkicaa/8086-emulator/blob/main/od_hex_vo_dec%204s.png)
 
 **Subject**
 
@@ -40,6 +40,6 @@ To run the program, you need an 8086 emulator or assembler. You can use emulator
 
 1. Download and install Emu8086 from [here](https://emu8086-microprocessor-emulator.en.softonic.com/).
 2. Clone this repository to your local machine.
-3. Open Emu8086 and load the `palindrome.asm` file.
+3. Open Emu8086 and load the `hexdecprog.exe.~asm` file.
 4. Assemble the code by pressing the Assemble button.
 5. Run the program by pressing the Run button or by pressing F10.
