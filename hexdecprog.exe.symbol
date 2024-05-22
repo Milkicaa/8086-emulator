@@ -1,0 +1,26 @@
+< THE SYMBOL TABLE >  hexdecprog.exe  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+STACK                    	00000     	-5        	SEGMENT   	(ITSELF)  
+DATA                     	00010     	-5        	SEGMENT   	(ITSELF)  
+HEXSTR                   	00000     	1         	VAR       	data      
+HEXSTRBUFFER             	00001     	1         	VAR       	data      
+HEXLEN                   	00005     	1         	VAR       	data      
+PROMPT                   	00006     	1         	VAR       	data      
+RESULTMSG                	00034     	1         	VAR       	data      
+DECRESULT                	0004B     	2         	VAR       	data      
+CODE                     	00015     	-5        	SEGMENT   	(ITSELF)  
+MAIN                     	00000     	-1        	NEAR      	code      
+CONVERT_LOOP             	00028     	-1        	LABEL     	code      
+HEX_TO_DEC               	0004F     	-1        	NEAR      	code      
+CHECK_ALPHA              	0005B     	-1        	LABEL     	code      
+DONE                     	00067     	-1        	LABEL     	code      
+INVALID_CHAR             	00068     	-1        	LABEL     	code      
+PRINT_DECIMAL            	0006B     	-1        	NEAR      	code      
+CONVERT_TO_STRING        	00071     	-1        	LABEL     	code      
+PRINT_STRING             	00084     	-1        	LABEL     	code      
+===================================================================================================
+[ 5/22/2024  --  11:08:55 AM ] 
+< END >
+ 

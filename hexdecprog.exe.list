@@ -1,0 +1,181 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+hexdecprog.exe -- emu8086 assembler version: 4.08  
+ 
+[ 5/22/2024  --  11:08:55 AM ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       .model small
+[   2]        :                                       .stack 100h
+[   3]        :                                       .data
+[   4]    0100: 05                                    hexStr db 5            ; First byte is buffer length (4 characters max) + 1 for length byte
+[   5]    0101: 00 00 00 00                           hexStrBuffer db 4 dup(0) ; Buffer to store user input (4 hex digits max)
+[   6]    0105: 00                                    hexLen db 0            ; Variable to store the length of the input string
+[   7]    0106: 45 6E 74 65 72 20 61 20 68 65 78 61   prompt db 'Enter a hexadecimal number (up to 4 digits): $'
+                64 65 63 69 6D 61 6C 20 6E 75 6D 62 
+                65 72 20 28 75 70 20 74 6F 20 34 20 
+                64 69 67 69 74 73 29 3A 20 24       
+[   8]    0134: 54 68 65 20 64 65 63 69 6D 61 6C 20   resultMsg db 'The decimal value is: $'
+                76 61 6C 75 65 20 69 73 3A 20 24    
+[   9]    014B: 00 00                                 decResult dw 0         ; Variable to store the result
+[  10]        :                                       
+[  11]        :                                       .code
+[  12]    0150:                                       main proc
+[  13]    0150: B8 10 00                              mov ax, @data
+[  14]    0153: 8E D8                                 mov ds, ax
+[  15]    0155: 8E C0                                 mov es, ax
+[  16]        :                                       
+[  17]        :                                       ; Display prompt
+[  18]    0157: BA 06 00                              lea dx, prompt
+[  19]    015A: B4 09                                 mov ah, 09h
+[  20]    015C: CD 21                                 int 21h
+[  21]        :                                       
+[  22]        :                                       ; Read user input
+[  23]    015E: BA 00 00                              lea dx, hexStr
+[  24]    0161: B4 0A                                 mov ah, 0Ah             ; Function to read console input
+[  25]    0163: CD 21                                 int 21h
+[  26]        :                                       
+[  27]        :                                       ; Calculate length of input string
+[  28]    0165: A0 01 00                              mov al, [hexStr + 1]
+[  29]    0168: A2 05 00                              mov hexLen, al
+[  30]        :                                       
+[  31]        :                                       ; Initialize pointers and variables
+[  32]    016B: BE 01 00                              lea si, hexStrBuffer    ; Source index pointing to the start of the hex string
+[  33]    016E: A0 05 00                              mov al, hexLen
+[  34]    0171: 98                                    cbw                    ; Convert byte in AL to word in AX (sign-extend)
+[  35]    0172: 8B C8                                 mov cx, ax             ; Move length into CX
+[  36]    0174: 33 DB                                 xor bx, bx             ; BX will hold the decimal result
+[  37]    0176: 33 D2                                 xor dx, dx             ; Clear DX for MUL operation
+[  38]        :                                       
+[  39]    0178:                                       convert_loop:
+[  40]    0178: 8A 04                                 mov al, [si]            ; Load the current hex character
+[  41]    017A: 46                                    inc si                  ; Move to the next character
+[  42]    017B: E8 21 00                              call hex_to_dec         ; Convert the hex character to decimal
+[  43]        :                                       
+[  44]        :                                       ; Multiply the current result by 16 (shift left by 4 bits) and add the new value
+[  45]    017E: 8B D3                                 mov dx, bx
+[  46]    0180: D1 E3 D1 E3 D1 E3 D1 E3               shl bx, 4               ; Multiply BX by 16
+[  47]    0188: 03 D8                                 add bx, ax              ; Add the new decimal value to BX
+[  48]        :                                       
+[  49]    018A: E2 EC                                 loop convert_loop       ; Repeat until all hex characters are processed
+[  50]        :                                       
+[  51]        :                                       ; Store the result
+[  52]    018C: 89 1E 4B 00                           mov decResult, bx
+[  53]        :                                       
+[  54]        :                                       ; Display result message
+[  55]    0190: BA 34 00                              lea dx, resultMsg
+[  56]    0193: B4 09                                 mov ah, 09h
+[  57]    0195: CD 21                                 int 21h
+[  58]        :                                       
+[  59]        :                                       ; Convert decimal result to string and display
+[  60]    0197: E8 21 00                              call print_decimal
+[  61]        :                                       
+[  62]        :                                       ; Exit the program
+[  63]    019A: B8 00 4C                              mov ax, 4C00h
+[  64]    019D: CD 21                                 int 21h
+[  65]        :                                       
+[  66]        :                                       main endp
+[  67]        :                                       
+[  68]        :                                       ; Subroutine to convert a hex character to its decimal value
+[  69]    019F:                                       hex_to_dec proc
+[  70]    019F: 3C 30                                 cmp al, '0'
+[  71]    01A1: 7C 15                                 jl invalid_char
+[  72]    01A3: 3C 39                                 cmp al, '9'
+[  73]    01A5: 7F 04                                 jg check_alpha
+[  74]    01A7: 2C 30                                 sub al, '0'
+[  75]    01A9: EB 0C                                 jmp done
+[  76]        :                                       
+[  77]    01AB:                                       check_alpha:
+[  78]    01AB: 3C 41                                 cmp al, 'A'
+[  79]    01AD: 7C 09                                 jl invalid_char
+[  80]    01AF: 3C 46                                 cmp al, 'F'
+[  81]    01B1: 7F 05                                 jg invalid_char
+[  82]    01B3: 2C 41                                 sub al, 'A'
+[  83]    01B5: 04 0A                                 add al, 10
+[  84]        :                                       
+[  85]    01B7:                                       done:
+[  86]    01B7: C3                                    ret
+[  87]        :                                       
+[  88]    01B8:                                       invalid_char:
+[  89]    01B8: B0 00                                 mov al, 0 ; In case of invalid character, just set it to 0 (error handling can be improved)
+[  90]    01BA: C3                                    ret
+[  91]        :                                       
+[  92]        :                                       hex_to_dec endp
+[  93]        :                                       
+[  94]        :                                       ; Subroutine to print a decimal number stored in BX
+[  95]    01BB:                                       print_decimal proc
+[  96]        :                                       ; Convert BX to string
+[  97]    01BB: BE 00 00                              lea si, hexStr          ; Reusing hexStr buffer for output
+[  98]    01BE: B9 00 00                              mov cx, 0               ; CX will be the length of the string
+[  99]        :                                       
+[ 100]    01C1:                                       convert_to_string:
+[ 101]    01C1: 33 D2                                 xor dx, dx              ; Clear DX
+[ 102]    01C3: 8B C3                                 mov ax, bx
+[ 103]    01C5: F7 36 0A 00                           div word ptr 10
+[ 104]    01C9: 80 C2 30                              add dl, '0'
+[ 105]    01CC: 52                                    push dx
+[ 106]    01CD: 41                                    inc cx
+[ 107]    01CE: 8B D8                                 mov bx, ax
+[ 108]    01D0: 85 DB                                 test bx, bx
+[ 109]    01D2: 75 ED                                 jnz convert_to_string
+[ 110]        :                                       
+[ 111]    01D4:                                       print_string:
+[ 112]    01D4: 5A                                    pop dx
+[ 113]    01D5: B4 02                                 mov ah, 02h
+[ 114]    01D7: CD 21                                 int 21h
+[ 115]    01D9: E2 F9                                 loop print_string
+[ 116]        :                                       
+[ 117]    01DB: C3                                    ret
+[ 118]        :                                       print_decimal endp
+[ 119]        :                                       
+[ 120]        :                                       end main
+[ 121]        :                                       
+[ 122]        :                                       
+ 
+===================================================================================================
+ 
+EXE HEADER - bytes from 0000 to 01FF inclusive.
+
+0000: 4D      -   exe signature (M)
+0001: 5A      -   exe signature (Z)
+0002: DC      -   bytes on last page (l.byte)
+0003: 01      -   bytes on last page (h.byte)
+0004: 02      -   512 byte pages in file (l.byte)
+0005: 00      -   512 byte pages in file (h.byte)
+0006: 01      -   relocations (l.byte)
+0007: 00      -   relocations (h.byte)
+0008: 20      -   paragraphs in header (l.byte)
+0009: 00      -   paragraphs in header (h.byte)
+000A: 00      -   minimum memory (l.byte)
+000B: 00      -   minimum memory (h.byte)
+000C: FF      -   maximum memory (l.byte)
+000D: FF      -   maximum memory (h.byte)
+000E: 00      -   SS - stack segment (l.byte)
+000F: 00      -   SS - stack segment (h.byte)
+0010: 00      -   SP - stack pointer (l.byte)
+0011: 01      -   SP - stack pointer (h.byte)
+0012: 9A      -   check sum (l.byte)
+0013: D1      -   check sum (h.byte)
+0014: 00      -   IP - instruction pointer (l.byte)
+0015: 00      -   IP - instruction pointer (h.byte)
+0016: 15      -   CS - code segment (l.byte)
+0017: 00      -   CS - code segment (h.byte)
+0018: 1E      -   relocation table adress (l.byte)
+0019: 00      -   relocation table adress (h.byte)
+001A: 00      -   overlay number (l.byte)
+001B: 00      -   overlay number (h.byte)
+001C: 01      -   signature (l.byte)
+001D: 00      -   signature (h.byte)
+001E: 01      -   relocation table - offset inside segment (l.byte)
+001F: 00      -   relocation table - offset inside segment (h.byte)
+0020: 15      -   relocation table - segment anchor (l.byte)
+0021: 00      -   relocation table - segment anchor (h.byte)
+0022 to 01FF  -   reserved relocation area  (00) 
+
+
+
+
+===================================================================================================
